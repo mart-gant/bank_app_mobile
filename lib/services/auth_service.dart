@@ -1,35 +1,37 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthService {
-  static final storage = FlutterSecureStorage();
+  final String baseUrl;
+  AuthService({required this.baseUrl});
 
-  static Future<bool> register(String email, String password, String accountType) async {
-    final response = await http.post(
-      Uri.parse('https://yourapi.com/api/register'),
-      body: {'email': email, 'password': password, 'type': accountType},
-    );
-    return response.statusCode == 200;
-  }
-
-  static Future<bool> login(String email, String password) async {
-    final basicAuth = 'Basic ' + base64Encode(utf8.encode('$email:$password'));
-
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final credentials = base64Encode(utf8.encode('$email:$password'));
     final response = await http.get(
-      Uri.parse('https://yourapi.com/api/settings/user'),
-      headers: {'Authorization': basicAuth},
+      Uri.parse('$baseUrl/api/settings/user'),
+      headers: {'Authorization': 'Basic $credentials'},
     );
 
     if (response.statusCode == 200) {
-      await storage.write(key: 'auth', value: basicAuth);
-      return true;
+      return jsonDecode(response.body);
     } else {
-      return false;
+      throw Exception('Login failed: ${response.statusCode}');
     }
   }
 
-  static Future<String?> getAuthHeader() async {
-    return await storage.read(key: 'auth');
+  Future<void> register(String email, String password, String accountType) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/register'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+        'account_type': accountType,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Registration failed: ${response.body}');
+    }
   }
 }
