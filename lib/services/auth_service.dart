@@ -2,36 +2,41 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  final String baseUrl;
-  AuthService({required this.baseUrl});
+  final http.Client client;
 
-  Future<Map<String, dynamic>> login(String email, String password) async {
-    final credentials = base64Encode(utf8.encode('$email:$password'));
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/settings/user'),
-      headers: {'Authorization': 'Basic $credentials'},
+  AuthService({http.Client? client}) : client = client ?? http.Client();
+
+  Future<void> login(String email, String password) async {
+    final response = await client.post(
+      Uri.parse('https://your-api.com/api/login'),
+      headers: {
+        'Authorization': 'Basic ${base64Encode(utf8.encode('$email:$password'))}',
+        'Content-Type': 'application/json',
+      },
     );
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Login failed: ${response.statusCode}');
+    if (response.statusCode != 200) {
+      throw Exception('Login failed');
     }
+
+    // TODO: Save token/response if needed
   }
 
-  Future<void> register(String email, String password, String accountType) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/api/register'),
+  Future<void> register(String email, String password, String name) async {
+    final response = await client.post(
+      Uri.parse('https://your-api.com/api/register'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'email': email,
         'password': password,
-        'account_type': accountType,
+        'name': name,
       }),
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Registration failed: ${response.body}');
+      throw Exception('Registration failed');
     }
+
+    // TODO: Save user data or token if needed
   }
 }
