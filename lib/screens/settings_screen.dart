@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../theme/app_theme.dart';
 import '../data/app_database.dart';
 import '../services/pdf_exporter.dart';
 
@@ -66,7 +65,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: Radio<ThemeMode>(
               value: ThemeMode.light,
               groupValue: _themeMode,
-              onChanged: _changeTheme,
+              onChanged: (mode) {
+                if (mode != null) _changeTheme(mode);
+              },
             ),
           ),
           ListTile(
@@ -74,7 +75,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: Radio<ThemeMode>(
               value: ThemeMode.dark,
               groupValue: _themeMode,
-              onChanged: _changeTheme,
+              onChanged: (mode) {
+                if (mode != null) _changeTheme(mode);
+              },
             ),
           ),
           ListTile(
@@ -82,7 +85,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: Radio<ThemeMode>(
               value: ThemeMode.system,
               groupValue: _themeMode,
-              onChanged: _changeTheme,
+              onChanged: (mode) {
+                if (mode != null) _changeTheme(mode);
+              },
             ),
           ),
           const SizedBox(height: 24),

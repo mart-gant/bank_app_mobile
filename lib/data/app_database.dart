@@ -1,11 +1,12 @@
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'package:path/path.dart' as p;
 
-part 'app_database.g.dart';
+part 'app_database.g.dart'; // <-- To wymagane!
 
+@DataClassName('User')
 class Users extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get email => text()();
@@ -19,20 +20,24 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
-  Future<int> addUser(String email, String name) {
-    return into(users).insert(UsersCompanion(
-      email: Value(email),
-      name: Value(name),
-    ));
+  Future<void> insertUser(String email, String name) {
+    return into(users).insert(
+      UsersCompanion(
+        email: Value(email),
+        name: Value(name),
+      ),
+    );
   }
 
-  Future<List<User>> getAllUsers() => select(users).get();
+  Future<List<User>> getAllUsers() {
+    return select(users).get();
+  }
 }
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'bankapp.sqlite'));
+    final file = File(p.join(dbFolder.path, 'db.sqlite'));
     return NativeDatabase(file);
   });
 }
