@@ -11,11 +11,14 @@ dependencies:
     sdk: flutter
   http: ^1.1.0
   shared_preferences: ^2.2.2
+  local_auth: ^2.1.6
   pdf: ^3.10.4
   path_provider: ^2.1.2
   drift: ^2.12.0
   sqlite3_flutter_libs: ^0.5.18
   cupertino_icons: ^1.0.8
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -24,6 +27,7 @@ dev_dependencies:
   http_mock_adapter: ^0.6.0
   drift_dev: ^2.12.0
   build_runner: ^2.4.6
+  flutter_lints: ^3.0.1
 
 flutter:
   uses-material-design: true

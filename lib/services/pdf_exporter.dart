@@ -11,7 +11,7 @@ Future<File> exportUserDataToPDF(String email, String name) async {
         child: pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            pw.Text('User Data', style: pw.TextStyle(fontSize: 24)),
+            pw.Text('User Data', style: const pw.TextStyle(fontSize: 24)),
             pw.SizedBox(height: 16),
             pw.Text('Name: $name'),
             pw.Text('Email: $email'),
