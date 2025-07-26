@@ -25,7 +25,7 @@ class BankApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: AppLocalizations.of(context).loginTitle,
+      title: 'Bank App',
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeMode,
