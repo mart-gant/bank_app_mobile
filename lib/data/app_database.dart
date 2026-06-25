@@ -20,17 +20,22 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
-  Future<void> insertUser(String email, String name) {
-    return into(users).insert(
-      UsersCompanion(
-        email: Value(email),
-        name: Value(name),
+  @override
+  Future<void> close() async {
+    await super.close();
+  }
+
+  Future<int> insertUser(String email, String name) async {
+    return await into(users).insert(
+      UsersCompanion.insert(
+        email: email,
+        name: name,
       ),
     );
   }
 
-  Future<List<User>> getAllUsers() {
-    return select(users).get();
+  Future<List<User>> getAllUsers() async {
+    return await select(users).get();
   }
 }
 

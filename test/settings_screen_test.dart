@@ -11,7 +11,7 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
-    testWidgets('renders all theme options', (tester) async {
+    testWidgets('renders all theme options', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: SettingsScreen(),
@@ -23,7 +23,7 @@ void main() {
       expect(find.text('System Default'), findsOneWidget);
     });
 
-    testWidgets('taps Dark Mode and updates state', (tester) async {
+    testWidgets('taps Dark Mode and updates state', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: SettingsScreen(),
@@ -34,6 +34,26 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Dark Mode'), findsOneWidget);
+    });
+
+    testWidgets('renders Export to PDF button', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: SettingsScreen(),
+        ),
+      );
+
+      expect(find.text('Export to PDF'), findsOneWidget);
+    });
+
+    testWidgets('renders Clear Local Database button', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: SettingsScreen(),
+        ),
+      );
+
+      expect(find.text('Clear Local Database'), findsOneWidget);
     });
   });
 }
