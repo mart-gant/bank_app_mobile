@@ -21,17 +21,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _fetchUserData() async {
+    final apiService = ApiService();
     try {
-      final data = await ApiService().getUserSettings();
-      setState(() {
-        _userData = data;
-        _isLoading = false;
-      });
+      final data = await apiService.getUserSettings();
+      if (mounted) {
+        setState(() {
+          _userData = data;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
+    } finally {
+      apiService.dispose();
     }
   }
 

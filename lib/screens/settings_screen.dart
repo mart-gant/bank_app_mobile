@@ -40,22 +40,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _clearDatabase() async {
     final db = AppDatabase();
-    await db.delete(db.users).go();
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Database cleared')),
-    );
+    try {
+      await db.delete(db.users).go();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Database cleared')),
+      );
+    } finally {
+      await db.close();
+    }
   }
 
   Future<void> _exportData() async {
     final db = AppDatabase();
-    final users = await db.getAllUsers();
-    if (users.isNotEmpty) {
-      final file = await exportUserDataToPDF(users.first.email, users.first.name);
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Exported to ${file.path}')),
-      );
+    try {
+      final users = await db.getAllUsers();
+      if (users.isNotEmpty) {
+        final file = await exportUserDataToPDF(users.first.email, users.first.name);
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Exported to ${file.path}')),
+        );
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No users to export')),
+        );
+      }
+    } finally {
+      await db.close();
     }
   }
 
@@ -77,7 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onChanged: (mode) {
                 if (mode != null) _changeTheme(mode);
               },
-              children: [
+              children: const [
                 RadioOption(
                   value: ThemeMode.light,
                   label: 'Light Mode',
@@ -142,7 +154,7 @@ class RadioOption<T> {
   final T value;
   final String label;
 
-  RadioOption({
+  const RadioOption({
     required this.value,
     required this.label,
   });

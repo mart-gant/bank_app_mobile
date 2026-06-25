@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
@@ -12,7 +13,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   final themeModeStr = prefs.getString('themeMode') ?? 'system';
-  final themeMode = ThemeMode.values.firstWhere((e) => e.name == themeModeStr);
+  final themeMode = ThemeMode.values.firstWhere(
+    (e) => e.name == themeModeStr,
+    orElse: () => ThemeMode.system,
+  );
   
   runApp(BankApp(themeMode: themeMode));
 }

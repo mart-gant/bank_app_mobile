@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 class AppLocalizations {
-  AppLocalizations(this.locale);
+  const AppLocalizations(this.locale);
 
   final Locale locale;
 

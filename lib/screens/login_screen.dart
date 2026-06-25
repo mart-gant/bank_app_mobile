@@ -21,6 +21,15 @@ class _LoginScreenState extends State<LoginScreen> {
       _error = null;
     });
 
+    // Validate inputs
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      setState(() {
+        _isLoading = false;
+        _error = 'Please fill in all fields';
+      });
+      return;
+    }
+
     try {
       await AuthService().login(
         _emailController.text,
@@ -30,9 +39,11 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacementNamed(context, '/dashboard');
       }
     } catch (e) {
-      setState(() {
-        _error = e.toString();
-      });
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+        });
+      }
     } finally {
       if (mounted) {
         setState(() {
@@ -48,26 +59,47 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).loginTitle),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+      body: Form(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
             Text('BankApp', style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 24),
-            TextField(
+            TextFormField(
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'),
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your email';
+                }
+                if (!value.contains('@')) {
+                  return 'Please enter a valid email';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 12),
-            TextField(
+            TextFormField(
               controller: _passwordController,
               obscureText: true,
               decoration: const InputDecoration(labelText: 'Password'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your password';
+                }
+                if (value.length < 6) {
+                  return 'Password must be at least 6 characters';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 24),
             if (_error != null)
               Text(_error!, style: const TextStyle(color: Colors.red)),
+            const SizedBox(height: 24),
             if (_isLoading)
               const CircularProgressIndicator()
             else
@@ -75,6 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: _login,
                 child: const Text('Login'),
               ),
+            const SizedBox(height: 12),
             TextButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/register');
